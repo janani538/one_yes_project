@@ -1,6 +1,8 @@
 name: Daily Weather Email Automation
 
 on:
+  push:
+    branches: [ main ]
   schedule:
     # Runs every day at 08:00 UTC (8:00 AM GMT / 9:00 AM BST)
     - cron: '0 8 * * *'

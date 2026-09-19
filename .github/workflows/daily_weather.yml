@@ -1,0 +1,41 @@
+name: Daily Weather Email Automation
+
+on:
+  schedule:
+    # Runs every day at 08:00 UTC (8:00 AM GMT / 9:00 AM BST)
+    - cron: '0 8 * * *'
+  # Allows triggering the workflow manually from the GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  send-weather-email:
+    name: Fetch Weather & Send Email
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Daily Weather Email Job
+        env:
+          # Optional: Can be configured in GitHub Secrets & Variables,
+          # or will use the built-in defaults from Agent.py
+          WEATHER_CITY: ${{ vars.WEATHER_CITY || 'London' }}
+          WEATHER_COUNTRY_CODE: ${{ vars.WEATHER_COUNTRY_CODE || 'GB' }}
+          SMTP_EMAIL: ${{ secrets.SMTP_EMAIL || 'poojashree71512@gmail.com' }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD || 'lygo huzg fefg agda' }}
+          RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL || 'jananijana538@gmail.com' }}
+          RAIN_THRESHOLD_PERCENT: '50'
+        run: |
+          python Agent.py --now
